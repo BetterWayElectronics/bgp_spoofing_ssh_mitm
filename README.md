@@ -17,8 +17,6 @@ This was also done to `/etc/quagga/zebra.conf`. In this case `ip address` was mo
 
 ![](https://i.imgur.com/MKvbivB.png)
 
-I then modified my default SSH port to 1337 and enabled this port in my nftables.
-
 I reset the BGP and Zebra services and the `ip route` now appeared as such:
 
 ![](https://i.imgur.com/qu8rOE9.png)
@@ -30,6 +28,8 @@ This meant that I was now intercepting all communication to and from 10.45.0.0/2
 If I looked at the routing from another machine, it is again confirmed.
 
 ## SSH MiTM
+
+I first modified my default SSH port to 1337 and enabled this new port in my nftables. I cant exactly use my SSH while honeypotting it!
 
 I decided against an interactive honeypot as I simply wanted their SSH passwords, they would assume they were already hacked or there was an issue with their password/session in this scenario - but this is only given if I kept the interception going for a short period.
 
