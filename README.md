@@ -42,7 +42,7 @@ I uploaded the ssh-honeypot to the server and installed it with the following co
 I then ran the honeypot with the command `bin/ssh-honeypot -h` and it was done.
 <br>If I attempted to connect to 10.45.0.1 I would get the following result:
 
-![](https://i.imgur.com/VEwb4Os.png)
+![](https://i.imgur.com/7322QOo.png)
 
 A success! I could now from this point monitor any unencrypted data from 10.45.0.1 with the command `tcpdump –I ens192 –X src 10.45.0.1`. Though in this environment there was no opportunity to do so.
 
