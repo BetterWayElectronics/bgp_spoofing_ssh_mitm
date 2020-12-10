@@ -31,20 +31,32 @@ If I looked at the routing from another machine, it is again confirmed.
 
 I first modified my default SSH port to 1337 and enabled this new port in my nftables. I cant exactly use my SSH while honeypotting it!
 
-I decided against an interactive honeypot as I simply wanted their SSH passwords, they would assume they were already hacked or there was an issue with their password/session in this scenario - but this is only given if I kept the interception going for a short period.
+Using [ssh-proxy-server](https://pypi.org/project/ssh-proxy-server/) as mitm tool has the advantage to get the credentials, record full sessions and hijack the session.
 
-I uploaded the ssh-honeypot to the server and installed it with the following commands
+I installed the honey pot with the following commands:
 
-* apt-get install clang make libssh-dev libjson-c-dev
+It is recommended to install the honey pot in a virtual python environment.
+* python3 -m venv ~/vpython3
+* source ~/vpython3/bin/activate
+
+Intall ssh-proxy-server as mitm tool:
+
+* pip install ssh-proxy-server
 * ssh-keygen -t rsa -f ./ssh-honeypot.rsa
-* bin/ssh-honeypot –r ./ssh-honeypot.rsa
 
-I then ran the honeypot with the command `bin/ssh-honeypot -h` and it was done.
-<br>If I attempted to connect to 10.45.0.1 I would get the following result:
+Redirect port 22 to 10022 (ssh-proxy-server default port):
 
-![](https://i.imgur.com/7322QOo.png)
+* sudo iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 10022
 
-A success! I could now from this point monitor any unencrypted data from 10.45.0.1 with the command `tcpdump –I ens192 –X src 10.45.0.1`. Though in this environment there was no opportunity to do so.
+Start the mitm ssh proxy server:
+
+* ssh-proxy-server --host-key ./ssh-honeypot.rsa --listen-address 0.0.0.0 --remote-host HONEY_POT_IP --remote-port 22 --auth-username HONEY_POT_USER --auth-password HONEY_POT_PASSWORD
+
+It is also possible to pass the authentication to the honey pot server. To pass the client credentials to the server, you must not use the parameter "--auth-username" and "--auth-password".
+
+
+
+When using the right plugnins in ssh-proxy-server, it is possible to monitor the session or hijack the session.
 
 I could also add every single IP in the network to my Zebra and BGP configuration. This would force all IPs to connect through me. 
 
